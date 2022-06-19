@@ -1,0 +1,95 @@
+一、概念
+1、MQ：（Message Queue）消息队列
+
+JMS：Java提出的一个标准【接口】，类似于JDBC，用于java程序直接的消息传递。
+
+AMQP：advanced message queuing protocol，高级消息队列【协议】，类似于HTTP协议。
+
+2、各种MQ
+1） ActiveMQ-（JMS，java语言，w/s）
+2）RabbitMQ-（AMQP，Erlang语言，速度最快，可以达到微秒,w/s）
+3）RocketMQ-（阿里,10W/s）
+4）Kafka（侧重于大数据领域，10W/s）
+
+二、RabbitMQ
+1、Publisher：生产者（发布者），生成消息的。
+2、Consumer：消费者，消费消息的。
+3、exchange：用来接收生产者发送的消息并将这些消息路由给服务器中的队列。
+	- direct：点对点
+	- fanout：广播
+	- topic：匹配模式，使用#来匹配，比如#.news、usa.#
+4、Queue：队列（容器），存放消息的。
+
+三、RabbitMQ的安装
+1、源码安装（tar.gz，编译，安装）
+	tar -xvf xxx.gar.gz
+	编译/安装
+2、yum安装（从中央仓库、镜像地址去自动下载RPM，自动下载所需依赖）
+	yum -y install xxx
+3、RMP安装（RPM：已经编译过的安装包，去官网下载，可以直接下载，也可以离线下载）
+	rpm -ivh xxx.rpm
+
+4、正式安装：RMP方式
+1、erlang-23.3.4.3-1.el7.x86_64.rpm  #rabbitmq的开发语言
+2、socat-1.7.3.2-2.el7.x86_64.rpm #网络工具包（增强版的Socket）
+3、rabbitmq-server-3.8.17-1.el7.noarch.rpm #rabbitmq安装程序
+
+5、启动
+service rabbitmq-server start #启动
+service rabbitmq-server stop #停止
+service rabbitmq-server restart #重启
+
+-----------------------------------------------------------------------------------------------------------
+由于RabbitMQ更新非常快，且需要依赖erlang工具包，yum安装会经常失败，原因是两者之间版本不匹配或者仓库中干脆没有，那么就需要使用RPM的安装方式了。（RPM：编译之后的二进制包）
+RPM的安装步骤比较简单，两步操作：
+第一步：提前去官网下载RPM包，上传到服务器
+第二步：在RPM包目录下，使用命令：rpm -ivh xxx.rpm的方式安装即可。（ivh：安装显示安装进度--install--verbose--hash）
+-----------------------------------------------------------------------------------------------------------------
+
+1、安装网络工具包socat
+yum -y install socat
+
+2、安装erlang环境（rabbitMQ就是用erlang开发的）
+rpm -ivh erlang-23.3.4.3-1.el7.x86_64.rpm（注意和rabbitMQ的版本对应）
+
+3、安装rabbitMQ
+rpm -ivh rabbitmq-server-3.8.17-1.el7.noarch.rpm
+
+4、配置（可以省略）
+创建：/etc/rabbitmq/rabbitmq-env.conf文件（rabbitmq-env.conf这个配置文件默认没有，需要我们手动创建）
+添加如下内容：NODENAME=rabbit@localhost
+
+5、启动与关闭
+service rabbitmq-server start #启动
+service rabbitmq-server stop #停止
+service rabbitmq-server restart #重启
+service rabbitmq-server status #查看状态
+
+6、开启管理界面：
+rabbitmq-plugins enable rabbitmq_management
+
+7、客户端访问：
+http://192.168.56.88:15672
+
+8、用户管理：
+新增一个用户
+rabbitmqctl add_user Username Password
+
+删除一个用户
+rabbitmqctl  delete_user  Username
+
+修改用户的密码
+rabbitmqctl  change_password  Username  Newpassword
+
+查看当前用户列表
+rabbitmqctl  list_users
+
+用户角色,按照个人理解，用户角色可分为五类，超级管理员, 监控者, 策略制定者, 普通管理者以及其他。
+(administrator，monitoring，policymaker，management,或其他自定义名称)
+无法登陆管理控制台，通常就是普通的生产者和消费者。
+设置用户角色
+rabbitmqctl set_user_tags User Tag
+
+
+
+
