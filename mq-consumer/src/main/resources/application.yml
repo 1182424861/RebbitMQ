@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: mq-consumer
+  rabbitmq:
+    host: 192.168.56.88
+    port: 5672
+    username: admin
+    password: admin
+    virtual-host: /
